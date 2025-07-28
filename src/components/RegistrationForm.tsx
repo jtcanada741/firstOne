@@ -30,6 +30,42 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
+  const validateField = (fieldName: string, value: string) => {
+    let validation: { isValid: boolean; message?: string } = { isValid: true };
+
+    switch (fieldName) {
+      case 'firstName':
+      case 'lastName':
+      case 'guardianName':
+        validation = validateName(value);
+        break;
+      case 'email':
+        validation = validateEmail(value);
+        break;
+      case 'phone':
+      case 'guardianPhone':
+        validation = validateCanadianPhone(value);
+        break;
+      case 'dateOfBirth':
+        if (!value) {
+          validation = { isValid: false, message: 'Date of birth is required' };
+        }
+        break;
+      case 'grade':
+        if (!value) {
+          validation = { isValid: false, message: 'Grade selection is required' };
+        }
+        break;
+      case 'address':
+        validation = validateCanadianAddress(value);
+        break;
+      default:
+        break;
+    }
+
+    return validation;
+  };
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -118,6 +154,18 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
     }
   };
 
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    const validation = validateField(name, value);
+    
+    if (!validation.isValid) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: validation.message || 'Field is invalid'
+      }));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
@@ -164,6 +212,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                         errors.firstName ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -181,6 +230,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                         errors.lastName ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -200,6 +250,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                         errors.email ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -217,6 +268,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                         errors.phone ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -236,6 +288,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
                       name="dateOfBirth"
                       value={formData.dateOfBirth}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                         errors.dateOfBirth ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -252,6 +305,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
                       name="grade"
                       value={formData.grade}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                         errors.grade ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -283,6 +337,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
                       name="guardianName"
                       value={formData.guardianName}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                         errors.guardianName ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -300,6 +355,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
                       name="guardianPhone"
                       value={formData.guardianPhone}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                         errors.guardianPhone ? 'border-red-500' : 'border-gray-300'
                       }`}
@@ -318,6 +374,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
                     rows={3}
                     value={formData.address}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                       errors.address ? 'border-red-500' : 'border-gray-300'
                     }`}
