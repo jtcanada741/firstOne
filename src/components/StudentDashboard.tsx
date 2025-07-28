@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Student, FeeStructure, Curriculum, Schedule } from '../types/Student';
+import { Student } from '../types/Student';
 import { feeStructures, curriculums, schedules } from '../data/schoolData';
 import { 
   User, 
