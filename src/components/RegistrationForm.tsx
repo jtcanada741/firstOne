@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { Student } from '../types/Student';
 import { ArrowLeft, UserPlus } from 'lucide-react';
+import { 
+  validateName, 
+  validateCanadianPhone, 
+  validateEmail, 
+  validateCanadianAddress 
+} from '../utils/validation';
 
 interface RegistrationFormProps {
   onSubmit: (student: Student) => void;
@@ -27,16 +33,57 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email is invalid';
-    if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-    if (!formData.dateOfBirth) newErrors.dateOfBirth = 'Date of birth is required';
-    if (!formData.grade) newErrors.grade = 'Grade selection is required';
-    if (!formData.guardianName.trim()) newErrors.guardianName = 'Guardian name is required';
-    if (!formData.guardianPhone.trim()) newErrors.guardianPhone = 'Guardian phone is required';
-    if (!formData.address.trim()) newErrors.address = 'Address is required';
+    // Validate first name
+    const firstNameValidation = validateName(formData.firstName);
+    if (!firstNameValidation.isValid) {
+      newErrors.firstName = firstNameValidation.message || 'First name is invalid';
+    }
+
+    // Validate last name
+    const lastNameValidation = validateName(formData.lastName);
+    if (!lastNameValidation.isValid) {
+      newErrors.lastName = lastNameValidation.message || 'Last name is invalid';
+    }
+
+    // Validate email
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.isValid) {
+      newErrors.email = emailValidation.message || 'Email is invalid';
+    }
+
+    // Validate phone
+    const phoneValidation = validateCanadianPhone(formData.phone);
+    if (!phoneValidation.isValid) {
+      newErrors.phone = phoneValidation.message || 'Phone number is invalid';
+    }
+
+    // Validate date of birth
+    if (!formData.dateOfBirth) {
+      newErrors.dateOfBirth = 'Date of birth is required';
+    }
+
+    // Validate grade
+    if (!formData.grade) {
+      newErrors.grade = 'Grade selection is required';
+    }
+
+    // Validate guardian name
+    const guardianNameValidation = validateName(formData.guardianName);
+    if (!guardianNameValidation.isValid) {
+      newErrors.guardianName = guardianNameValidation.message || 'Guardian name is invalid';
+    }
+
+    // Validate guardian phone
+    const guardianPhoneValidation = validateCanadianPhone(formData.guardianPhone);
+    if (!guardianPhoneValidation.isValid) {
+      newErrors.guardianPhone = guardianPhoneValidation.message || 'Guardian phone number is invalid';
+    }
+
+    // Validate Canadian address
+    const addressValidation = validateCanadianAddress(formData.address);
+    if (!addressValidation.isValid) {
+      newErrors.address = addressValidation.message || 'Address is invalid';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
