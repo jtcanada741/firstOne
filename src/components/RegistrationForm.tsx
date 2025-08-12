@@ -5,7 +5,8 @@ import {
   validateName, 
   validateCanadianPhone, 
   validateEmail, 
-  validateCanadianAddress 
+  validateCanadianAddress,
+  validateDateOfBirth
 } from '../utils/validation';
 
 interface RegistrationFormProps {
@@ -58,8 +59,9 @@ const RegistrationForm: React.FC<RegistrationFormProps> = ({ onSubmit, onBack })
     }
 
     // Validate date of birth
-    if (!formData.dateOfBirth) {
-      newErrors.dateOfBirth = 'Date of birth is required';
+    const dateOfBirthValidation = validateDateOfBirth(formData.dateOfBirth);
+    if (!dateOfBirthValidation.isValid) {
+      newErrors.dateOfBirth = dateOfBirthValidation.message || 'Date of birth is invalid';
     }
 
     // Validate grade
